@@ -9,6 +9,8 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SliderController;
+use Illuminate\Support\Facades\Artisan;
+
 /*-------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
@@ -54,6 +56,15 @@ Route::get('question/{uuid}',[QuestionController::class,'show']);
 
 Route::get('answer/all',[AnswerController::class,'index']);
 Route::get('answer/{uuid}',[AnswerController::class,'show']);
+
+Route::get('/setnullable', function () {
+    shell_exec('(cd '.base_path().' && composer require doctrine/dbal)');
+ 
+});
+Route::get('/setnullable2', function () {
+   
+  Artisan::call('migrate --path=database/migrations/2023_08_21_213509_changetonullable.php');
+});
 
 Route::group(['middleware'=>['auth:sanctum']],function (){
     Route::post('/logout',[AuthController::class,'logout']);

@@ -49,7 +49,39 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator=Validator::make($request->all(),[
+            'name'=>'required|string',
+             'category_id'=>  'required|numeric',
+             'logo2'=>'required|image'
+            ]
+        );
+                if($validator->fails()){
+                    return $this-> apiResponse([], false,$validator->errors(),422);
+        }
+      try {
+       
+          $uuid = Str::uuid()->toString();
+           $data= $validator->validated();
+          $data['uuid']=$uuid;
+          if($request->hasFile('logo2'))
+          {
+           $file=$request->file('logo2');
+           $path=$this-> uploadOne($file, 'colleges');
+        
+        $data['logo']=$path;
+
+          }
+          $college=College::create($data);
+          $msg='college is created successfully';
+          $data2=array();
+          $data2['college']=new CollegeResource($college);
+         return  $this-> apiResponse($data2,true, $msg,201);
+       
+        }
+        catch (\Exception $ex)
+        {
+            return $this->apiResponse([], false,$ex->getMessage() ,500);
+        }
     }
 
     /**
