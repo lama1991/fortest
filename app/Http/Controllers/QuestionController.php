@@ -6,6 +6,8 @@ use App\Http\Resources\QuestionResource;
 use App\Http\Traits\GeneralTrait;
 use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class QuestionController extends Controller
 {
@@ -50,31 +52,27 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
         $validator=Validator::make($request->all(),[
-            'name'=>'required|string',
-             'category_id'=>  'required|numeric',
-             'logo2'=>'required|image'
-            ]
+            'content'=>'required|string',
+            'reference'=>'required|string',
+             'term_id'=>  'numeric',
+             'specialization_id'=>  'numeric',
+             'college_id'=>'required|numeric',
+
+               ]
         );
                 if($validator->fails()){
                     return $this-> apiResponse([], false,$validator->errors(),422);
         }
       try {
        
-          $uuid = Str::uuid()->toString();
-           $data= $validator->validated();
-          $data['uuid']=$uuid;
-          if($request->hasFile('logo2'))
-          {
-           $file=$request->file('logo2');
-           $path=$this-> uploadOne($file, 'colleges');
         
-        $data['logo']=$path;
-
-          }
-          $college=College::create($data);
-          $msg='college is created successfully';
+           $data= $validator->validated();
+          $data['uuid']=Str::uuid()->toString();
+        $question=Question::create($data);
+         
+          $msg='question is created successfully';
           $data2=array();
-          $data2['college']=new CollegeResource($college);
+          $data2['question']=new QuestionResource($question);
          return  $this-> apiResponse($data2,true, $msg,201);
        
         }

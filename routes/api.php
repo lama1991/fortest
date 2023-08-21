@@ -52,6 +52,7 @@ Route::get('/slider/{id}',[SliderController::class,'show']);
 Route::post('/slider/create',[SliderController::class,'store']);
 
 Route::get('question/all',[QuestionController::class,'index']);
+Route::post('question/create',[QuestionController::class,'store']);
 Route::get('question/{uuid}',[QuestionController::class,'show']);
 
 Route::get('answer/all',[AnswerController::class,'index']);
